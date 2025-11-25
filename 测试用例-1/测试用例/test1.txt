@@ -1,0 +1,10 @@
+[2025-01-15 10:00:00] INFO Network Started
+[2025-01-15 10:00:01] ERROR Database Connection failed
+[2025-01-15 10:00:02] WARN Auth Token missing
+[2025-01-15 10:00:03] ERROR Database Timeout
+[2025-01-15 10:00:04] INFO Network Request OK
+[2025-01-15 10:00:05] ERROR Network Socket closed
+[2025-01-15 10:00:06] ERROR Database Deadlock
+[2025-01-15 10:00:07] INFO Auth Login success
+[2025-01-15 10:00:08] ERROR Network Packet lost
+[2025-01-15 10:00:09] INFO Database Query OK
