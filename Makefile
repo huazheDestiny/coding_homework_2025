@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -Wall -g
 TARGET = loganalyzer
-SOURCES = main.cpp LinkedList.cpp
+SOURCES = main.cpp LinkedList.cpp CircularQueue.cpp
 
 $(TARGET): $(SOURCES)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SOURCES)
