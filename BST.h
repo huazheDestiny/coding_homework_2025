@@ -10,7 +10,7 @@ struct BSTNode
     char module_name[MAX_MODULE];   //模块名
     int error_count; //错误数目
     BSTNode* left;//根节点指向左右孩子的指针
-    BSTNode* Right;
+    BSTNode* right;
 
     BSTNode(const char* module,int count = 1);
 };
@@ -27,6 +27,7 @@ private:
     BSTNode* root;
 
     void destroyTree(BSTNode* node);
+    BSTNode* findMin(BSTNode* node) const; //查找并返回当前子树最小节点的函数
     BSTNode* updateCountHelper(BSTNode* node,const char* module,int count_num); // 处理updateCount的递归辅助函数
     void collectStats(BSTNode* node,StatsEntry stats_array[],int& index) const; //中序遍历收集统计信息
 public:
