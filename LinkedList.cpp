@@ -188,3 +188,14 @@ void LinkedList::traverseBackward() const {
         current = current->prev;
     }
 }
+
+//深拷贝函数
+void LinkedList::copyFrom(const LinkedList& other) {
+    this->clear(); // 先清空自己
+
+    ListNode* current = other.getHead();
+    while (current != nullptr) {
+        this->insertTail(current->data); // 使用尾插法插入节点
+        current = current->next;
+    }
+}

@@ -8,6 +8,7 @@
 #include "LinkedList.h"
 #include "CircularQueue.h"
 #include "BST.h"
+#include "KMP.h"
 
 // 最大命令长度
 #define MAX_CMD_LEN 100
@@ -201,7 +202,7 @@ int main() {
             // 需要 KMP 算法支持，此处留空
             char keyword[100];
             scanf("%s", keyword);
-            std::cout << "Command SEARCH not implemented yet." << std::endl;
+            KMP::searchLogs(list, keyword);
         }
         else if (strCaseCmp(command, "DELETE") == 0) {
             // 需要 UndoStack 支持，此处留空

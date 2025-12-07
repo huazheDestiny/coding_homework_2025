@@ -93,3 +93,21 @@ int CircularQueue::removeAt(ListNode* target) { //删除指定位置的元素
     }
     return found ? 1 : 0;
 }
+
+void CircularQueue::copyFrom(const CircularQueue& other, const LinkedList& newList) {
+    this->clear();
+    
+    this->front = other.front;
+    this->rear = other.rear;
+    this->current_size = other.current_size;
+
+    // 复制 data 数组
+    for (int i = 0; i < MAX_QUEUE_SIZE; ++i) {
+        ListNode* oldNode = other.data[i];
+        if (oldNode != nullptr) {
+            this->data[i] = newList.getNode(oldNode->line_number);
+        } else {
+            this->data[i] = nullptr;
+        }
+    }
+}

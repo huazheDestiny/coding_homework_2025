@@ -30,6 +30,7 @@ private:
     BSTNode* findMin(BSTNode* node) const; //查找并返回当前子树最小节点的函数
     BSTNode* updateCountHelper(BSTNode* node,const char* module,int count_num); // 处理updateCount的递归辅助函数
     void collectStats(BSTNode* node,StatsEntry stats_array[],int& index) const; //中序遍历收集统计信息
+    BSTNode* copyTreeHelper(BSTNode* node); //递归辅助函数，用于深拷贝
 public:
     //构造函数和析构函数
     BST();
@@ -39,8 +40,11 @@ public:
     void updateCount(const char* module,int count_num = 1); //更新指定模块的错误计数,LOAD/UNDO会增加计数，DELETE会减少计数
 
     void getStats(StatsEntry stats_array[],int& size) const; //用于实现stats命令
+
+    void copyFrom(const BST& other); //深拷贝接口
 };
 
 bool compareStats(const StatsEntry& a,const StatsEntry& b); //用于排序统计结果的比较函数
+
 
 #endif

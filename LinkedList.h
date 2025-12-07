@@ -53,7 +53,8 @@ public:
     void traverseForward() const;  //从头到尾遍历
     void traverseBackward() const; //从尾到头遍历
 
-    //还可以增加一些其他的额外操作  
+    //深拷贝函数，用于撤销
+    void copyFrom(const LinkedList& other); 
 };
 
 #endif

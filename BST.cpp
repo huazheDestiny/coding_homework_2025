@@ -150,3 +150,23 @@ void BST::getStats(StatsEntry stats_array[],int& size) const{
         std::cout << stats_array[i].module_name << ": " << stats_array[i].count <<" errors" << std::endl;
     }
 }
+
+void BST::copyFrom(const BST& other) {
+    this->clear(); // 清空当前树
+    if (other.root != nullptr) {
+        this->root = copyTreeHelper(other.root);
+    }
+}
+
+BSTNode* BST::copyTreeHelper(BSTNode* node) {
+    if (node == nullptr) return nullptr;
+    
+    // 创建新节点，复制数据
+    BSTNode* newNode = new BSTNode(node->module_name, node->error_count);
+    
+    // 递归复制左右子树
+    newNode->left = copyTreeHelper(node->left);
+    newNode->right = copyTreeHelper(node->right);
+    
+    return newNode;
+}

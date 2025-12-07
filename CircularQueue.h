@@ -36,6 +36,9 @@ public:
 
     //删除操作，用于delete命令
     int removeAt(ListNode* target);
+
+    //用于copy
+    void copyFrom(const CircularQueue& other,const LinkedList& newlist);
 };
 
 #endif
