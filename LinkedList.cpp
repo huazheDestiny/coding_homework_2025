@@ -4,7 +4,6 @@
 #include <cstring>
 #include <cstdio>
 
-// ListNode 结构体
 
 ListNode::ListNode(const LogEntry& entry, int number) {
     this->data = entry; 
@@ -12,8 +11,6 @@ ListNode::ListNode(const LogEntry& entry, int number) {
     this->next = nullptr;
     this->prev = nullptr;
 }
-
-// LinkedList 类实现
 
 // 构造函数
 LinkedList::LinkedList() {
@@ -52,7 +49,7 @@ int LinkedList::insertHead(const LogEntry& entry) {
         head->prev = newNode;
         head = newNode;
 
-        // 重新编号：除了新头节点外，后面所有节点行号 +1
+        // 重新编号之后除了新头节点外，后面所有节点行号 +1
         ListNode* current = head->next;
         while (current != nullptr) {
             current->line_number++;
@@ -86,7 +83,7 @@ int LinkedList::deleteAt(int line_number) {
         return 0; // 删除失败，行号无效
     }
 
-    // 判断是从头找还是从尾找
+    // 判断是从头找还是从尾找，小于一半从头，否则从尾
     ListNode* target = nullptr;
     if (line_number < size / 2) {
         target = head;
@@ -144,7 +141,7 @@ ListNode* LinkedList::getNode(int line_number) const {
     }
 
     ListNode* current;
-    // 简单的优化：根据行号位置决定从头还是从尾遍历
+    // 根据行号位置决定从头还是从尾遍历，小于一半从头，否则从尾
     if (line_number <= size / 2) {
         current = head;
         while (current != nullptr) {
@@ -168,7 +165,7 @@ ListNode* LinkedList::getNode(int line_number) const {
 // 从头到尾遍历并打印
 void LinkedList::traverseForward() const {
     ListNode* current = head;
-    while (current != nullptr) { //每一条日志消息都是‘\0’结尾
+    while (current != nullptr) { 
         std::cout << "[" << current->data.max_time << "] "
                   << current->data.max_level << " "
                   << current->data.max_module << " "
@@ -198,4 +195,49 @@ void LinkedList::copyFrom(const LinkedList& other) {
         this->insertTail(current->data); // 使用尾插法插入节点
         current = current->next;
     }
+}
+
+//指定行插入
+ListNode* LinkedList::insertAt(int line_number, const LogEntry& entry) {
+    //头插和尾插
+    if (line_number <= 1) {
+        insertHead(entry);
+        return head;
+    }
+
+    if (line_number > size + 1) {
+        insertTail(entry);
+        return tail;
+    }
+    
+    //插入非头非尾节点前
+    ListNode* current = getNode(line_number); 
+    
+    if (current == nullptr) {
+        return nullptr; 
+    }
+
+    ListNode* newNode = new ListNode(entry, line_number);
+
+    newNode->prev = current->prev;
+    newNode->next = current;
+    
+    if (current->prev != nullptr) {
+        current->prev->next = newNode;
+    } else {
+        head = newNode;
+    }
+    current->prev = newNode;
+
+    size++;
+
+    //重编号
+    ListNode* renumber_start = newNode;
+    int new_line_number = renumber_start->line_number;
+    while (renumber_start != nullptr) {
+        renumber_start->line_number = new_line_number++;
+        renumber_start = renumber_start->next;
+    }
+    
+    return newNode;
 }

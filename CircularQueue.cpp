@@ -6,65 +6,73 @@
 
 #include "CircularQueue.h"
 
-CircularQueue::CircularQueue() { //构造函数的实现
+//含有最大容量的构造函数
+CircularQueue::CircularQueue(int cap) {
     front = 0;
     rear = 0;
     current_size = 0;
-    for (int i = 0; i < MAX_QUEUE_SIZE; ++i)
+    capacity = cap;
+    data = new ListNode*[capacity];
+    for (int i = 0; i < capacity; i++)
     {
         data[i] = nullptr;
     }
 }
-
-CircularQueue::~CircularQueue() { //析构函数的实现
+//析构函数
+CircularQueue::~CircularQueue() {
     clear();
+    delete[] data;
 }
 
-void CircularQueue::clear() { //清空队列的实现
+//清空队列
+void CircularQueue::clear() {
     front = 0;
     rear = 0;
     current_size = 0;
-    for (int i = 0; i < MAX_QUEUE_SIZE; i++)
+    for (int i = 0; i < capacity; i++)
     {
         data[i] = nullptr;
     }
 }
 
-int CircularQueue::enqueue(ListNode* node) { //入队操作的实现，失败返回0成功返回1
+//入队
+int CircularQueue::enqueue(ListNode* node) {
     if(node == nullptr) {return 0;}; //空指针不入队
     
     data[rear] = node;
 
     if (isFull()){
-        front = (front + 1) % MAX_QUEUE_SIZE; //覆盖最早的元素
+        front = (front + 1) % capacity; //覆盖最早的元素
     } else {
         current_size++;
     }
-    rear = (rear + 1) % MAX_QUEUE_SIZE;
+    rear = (rear + 1) % capacity;
     return 1;
 }
 
-ListNode* CircularQueue::dequeue() { //出队操作的实现，队空返回nullptr
+//出队
+ListNode* CircularQueue::dequeue() {
     if (isEmpty()){
         return nullptr;
     }
     ListNode* dequeued_data = data[front];
     data[front] = nullptr; 
-    front = (front + 1) % MAX_QUEUE_SIZE;
+    front = (front + 1) % capacity;
     current_size--;
     return dequeued_data;
 }
 
-void CircularQueue::traverseQueue(int n) const { //从队头到队尾遍历队列的实现，打印前n个元素
+//从队头到队尾遍历，打印前n个元素
+void CircularQueue::traverseQueue(int n) const {
     if (isEmpty()){
         return;
     }
 
     int count = std::min(n, current_size);
-    int start_index = (front + current_size - count) % MAX_QUEUE_SIZE;
+    int start_index = (front + current_size - count) % capacity;
     for (int i = 0; i < count; i++)
     {
-        int index = (start_index + i) % MAX_QUEUE_SIZE;
+        int index = (start_index + i) % capacity;
         ListNode* node = data[index];
         if (node != nullptr){
             std::cout << "[" << node->data.max_time << "] "
@@ -75,17 +83,17 @@ void CircularQueue::traverseQueue(int n) const { //从队头到队尾遍历队�
     }
 }
 
-int CircularQueue::removeAt(ListNode* target) { //删除指定位置的元素
+//删除指定位置的元素
+int CircularQueue::removeAt(ListNode* target) {
     if (isEmpty() || target == nullptr) {
         return 0;
     }
 
     bool found = false;
     for (int i = 0; i < current_size; ++i) {
-        int index = (front + i) % MAX_QUEUE_SIZE;
+        int index = (front + i) % capacity;
         
         if (data[index] == target) {
-            // 找到匹配的指针，将其设为 nullptr 逻辑移除
             data[index] = nullptr;
             found = true;
             break; 
@@ -94,15 +102,18 @@ int CircularQueue::removeAt(ListNode* target) { //删除指定位置的元素
     return found ? 1 : 0;
 }
 
+//深拷贝函数
 void CircularQueue::copyFrom(const CircularQueue& other, const LinkedList& newList) {
-    this->clear();
-    
+    delete[] this->data; //释放原有内存
+    //this->clear();
+    this->capacity = other.capacity;
+    this->data = new ListNode*[this->capacity];
     this->front = other.front;
     this->rear = other.rear;
     this->current_size = other.current_size;
 
-    // 复制 data 数组
-    for (int i = 0; i < MAX_QUEUE_SIZE; ++i) {
+
+    for (int i = 0; i < capacity; ++i) {
         ListNode* oldNode = other.data[i];
         if (oldNode != nullptr) {
             this->data[i] = newList.getNode(oldNode->line_number);
