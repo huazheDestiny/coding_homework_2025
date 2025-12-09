@@ -78,7 +78,7 @@ int LinkedList::insertTail(const LogEntry& entry) {
 }
 
 // 删除指定行号
-int LinkedList::deleteAt(int line_number) {
+int LinkedList::deleteLine(int line_number) {
     if (line_number < 1 || line_number > size) {
         return 0; // 删除失败，行号无效
     }
@@ -187,7 +187,7 @@ void LinkedList::traverseBackward() const {
 }
 
 //深拷贝函数
-void LinkedList::copyFrom(const LinkedList& other) {
+void LinkedList::deepcopy(const LinkedList& other) {
     this->clear(); // 先清空自己
 
     ListNode* current = other.getHead();
@@ -232,11 +232,11 @@ ListNode* LinkedList::insertAt(int line_number, const LogEntry& entry) {
     size++;
 
     //重编号
-    ListNode* renumber_start = newNode;
-    int new_line_number = renumber_start->line_number;
-    while (renumber_start != nullptr) {
-        renumber_start->line_number = new_line_number++;
-        renumber_start = renumber_start->next;
+    ListNode* renumber = newNode;
+    int new_line_number = renumber->line_number;
+    while (renumber != nullptr) {
+        renumber->line_number = new_line_number++;
+        renumber = renumber->next;
     }
     
     return newNode;

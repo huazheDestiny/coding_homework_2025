@@ -6,14 +6,14 @@
 #define MAX_TIME 20
 #define MAX_LEVEL 10
 #define MAX_MODULE 20
-#define MAX_MASSAGE 200
+#define MAX_MESSAGE 200
 #define MAX_LINE_LENGTH 300
 
 struct LogEntry{   //每个日志消息的条目
     char max_time[MAX_TIME];
     char max_level[MAX_LEVEL];
     char max_module[MAX_MODULE];
-    char max_message[MAX_MASSAGE];
+    char max_message[MAX_MESSAGE];
     char max_line[MAX_LINE_LENGTH];  //日志消息每一行的最大长度
 };
 
@@ -38,7 +38,7 @@ public:
     ~LinkedList();
     int insertHead(const LogEntry& entry);  //头插
     int insertTail(const LogEntry& entry);  //尾插
-    int deleteAt(int line_number); //删除指定行号
+    int deleteLine(int line_number); //删除指定行号
     void clear(); //清空链表
 
     //查询操作
@@ -54,7 +54,7 @@ public:
     void traverseBackward() const; //从尾到头遍历
 
     //深拷贝函数，用于撤销
-    void copyFrom(const LinkedList& other); 
+    void deepcopy(const LinkedList& other); 
     //在指定行号处插入新节点,用于还原
     ListNode* insertAt(int line_number, const LogEntry& entry);
 };

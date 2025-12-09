@@ -20,6 +20,7 @@ private:
 public:
     UndoStack(int size = MAX_UNDO_STACK_SIZE);
     ~UndoStack();
+    void clear(){top = -1;};
     
     //查询操作
     bool isEmpty() const {return top == -1;};
@@ -32,13 +33,8 @@ public:
         return false;
     };
 
-    void clear() {top = -1;};
-
     //出入栈
     bool  push(const LogEntry& entry, int line_number);
     bool  pop(Undo& action);
 };
-
-
-
 #endif

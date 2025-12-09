@@ -2,7 +2,7 @@
 #include "BST.h"
 #include <iostream>
 #include <cstring>
-#include <algorithm>
+// #include <algorithm>
 
 #define MAX_STATS_BUFFER 50000  //分配一个巨大的缓冲区确保STATS命令不会失效
 
@@ -21,12 +21,12 @@ BST::~BST(){
 }
 
 void BST::clear(){
-    destroyTree(root);
+    deleteTree(root);
     root = nullptr;
 }
 
 //迭代方法删除整个树
-void BST::destroyTree(BSTNode* node){
+void BST::deleteTree(BSTNode* node){
     if(node == nullptr) return;
 
     BSTNode** stack = new BSTNode*[MAX_STATS_BUFFER]; //BST私有栈，避免使用静态数组
@@ -102,16 +102,13 @@ BSTNode* BST::updateCountHelper(BSTNode* node,const char* module,int count_num){
             
         strncpy(node -> module_name,successor -> module_name,MAX_MODULE - 1);
         node -> module_name[MAX_MODULE - 1] = '\0';
-        node -> error_count = successor -> error_count;
-        
+        node -> error_count = successor -> error_count;  
         node -> right = updateCountHelper(node -> right,successor -> module_name,0);
-
         BSTNode* tmp = findMin(node -> right);
 
         strncpy(node -> module_name,tmp -> module_name,MAX_MODULE - 1);
         node -> module_name[MAX_MODULE - 1] = '\0';
         node -> error_count = tmp -> error_count;
-
         node -> right = updateCountHelper(node -> right,tmp -> module_name,0 - tmp -> error_count);
         }
     }
@@ -129,7 +126,7 @@ void BST::updateCount(const char* module,int count_num){
 }
 
 //利用保留站控制状态
-void BST::collectStats(BSTNode* node,StatsEntry results[],int& index) const {
+void BST::controlstats(BSTNode* node,StatsEntry results[],int& m) const {
     if (node == nullptr)
     {
         return;
@@ -154,11 +151,11 @@ void BST::collectStats(BSTNode* node,StatsEntry results[],int& index) const {
             current = stack[top--];
             
             // 中序操作收集统计数据
-            if (current->error_count > 0 && index < MAX_STATS_BUFFER) {
-                strncpy(results[index].module_name, current->module_name, MAX_MODULE - 1);
-                results[index].module_name[MAX_MODULE - 1] = '\0';
-                results[index].count = current->error_count;
-                index++;
+            if (current->error_count > 0 && m < MAX_STATS_BUFFER) {
+                strncpy(results[m].module_name, current->module_name, MAX_MODULE - 1);
+                results[m].module_name[MAX_MODULE - 1] = '\0';
+                results[m].count = current->error_count;
+                m++;
             }
             current = current->right;
         }
@@ -183,8 +180,19 @@ bool compareStats(const StatsEntry& a,const StatsEntry& b){
 //获取统计信息，STATS输出
 void BST::getStats(StatsEntry stats_array[],int& size) const{
     size = 0;
-    collectStats(root,stats_array,size);
-    std::sort(stats_array,stats_array + size,compareStats);
+    controlstats(root,stats_array,size);
+    //冒泡排序输出
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - 1 - i; j++) {
+            if (!compareStats(stats_array[j], stats_array[j+1])) {
+                StatsEntry temp = stats_array[j];
+                stats_array[j] = stats_array[j+1];
+                stats_array[j+1] = temp;
+            }
+        }
+    }
+    //可以用algorithm库中的sort获得排序的加速体验
+
     //打印结果
     for (int i = 0; i < size; i++)
     {
@@ -193,22 +201,22 @@ void BST::getStats(StatsEntry stats_array[],int& size) const{
 }
 
 //深拷贝函数接口和其辅助函数
-void BST::copyFrom(const BST& other) {
+void BST::deepcopy(const BST& other) {
     this->clear(); 
     if (other.root != nullptr) {
-        this->root = copyTreeHelper(other.root);
+        this->root = deepCopyTree(other.root);
     }
 }
 
-BSTNode* BST::copyTreeHelper(BSTNode* node) {
+BSTNode* BST::deepCopyTree(BSTNode* node) {
     if (node == nullptr) return nullptr;
     
     // 创建新节点，复制数据
     BSTNode* newNode = new BSTNode(node->module_name, node->error_count);
     
     // 递归复制左右子树，因为撤回操作不会太频繁，递归不会导致栈溢出
-    newNode->left = copyTreeHelper(node->left);
-    newNode->right = copyTreeHelper(node->right);
+    newNode->left = deepCopyTree(node->left);
+    newNode->right = deepCopyTree(node->right);
     
     return newNode;
 }

@@ -26,11 +26,11 @@ class BST
 private:
     BSTNode* root;
 
-    void destroyTree(BSTNode* node);
+    void deleteTree(BSTNode* node);
     BSTNode* findMin(BSTNode* node) const; //查找并返回当前子树最小节点的函数
     BSTNode* updateCountHelper(BSTNode* node,const char* module,int count_num); // 处理updateCount的辅助函数
-    void collectStats(BSTNode* node,StatsEntry stats_array[],int& index) const; //中序遍历收集统计信息
-    BSTNode* copyTreeHelper(BSTNode* node); //递归辅助函数，用于深拷贝
+    void controlstats(BSTNode* node,StatsEntry stats_array[],int& m) const; //中序遍历收集统计信息
+    BSTNode* deepCopyTree(BSTNode* node); //递归辅助函数，用于深拷贝
 public:
     //构造函数和析构函数
     BST();
@@ -41,7 +41,7 @@ public:
 
     void getStats(StatsEntry stats_array[],int& size) const; //用于实现stats命令
 
-    void copyFrom(const BST& other); //深拷贝函数的接口
+    void deepcopy(const BST& other); //深拷贝函数的接口
 };
 
 bool compareStats(const StatsEntry& a,const StatsEntry& b); //用于排序统计结果的比较函数

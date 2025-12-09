@@ -69,11 +69,11 @@ void CircularQueue::traverseQueue(int n) const {
     }
 
     int count = std::min(n, current_size);
-    int start_index = (front + current_size - count) % capacity;
+    int start_j = (front + current_size - count) % capacity;
     for (int i = 0; i < count; i++)
     {
-        int index = (start_index + i) % capacity;
-        ListNode* node = data[index];
+        int j = (start_j + i) % capacity;
+        ListNode* node = data[j];
         if (node != nullptr){
             std::cout << "[" << node->data.max_time << "] "
                       << node->data.max_level << " "
@@ -84,17 +84,17 @@ void CircularQueue::traverseQueue(int n) const {
 }
 
 //删除指定位置的元素
-int CircularQueue::removeAt(ListNode* target) {
+int CircularQueue::removeLine(ListNode* target) {
     if (isEmpty() || target == nullptr) {
         return 0;
     }
 
     bool found = false;
     for (int i = 0; i < current_size; ++i) {
-        int index = (front + i) % capacity;
+        int j = (front + i) % capacity;
         
-        if (data[index] == target) {
-            data[index] = nullptr;
+        if (data[j] == target) {
+            data[j] = nullptr;
             found = true;
             break; 
         }
@@ -103,7 +103,7 @@ int CircularQueue::removeAt(ListNode* target) {
 }
 
 //深拷贝函数
-void CircularQueue::copyFrom(const CircularQueue& other, const LinkedList& newList) {
+void CircularQueue::deepcopy(const CircularQueue& other, const LinkedList& newList) {
     delete[] this->data; //释放原有内存
     //this->clear();
     this->capacity = other.capacity;

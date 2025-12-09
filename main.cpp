@@ -17,7 +17,7 @@
 #define MAX_STATS_BUFFER 50000 
 
 // 辅助函数：不区分大小写的字符串比较
-int strCaseCmp(const char* s1, const char* s2) {
+int strcmpNocap(const char* s1, const char* s2) {
     while (*s1 && *s2) {
         int c1 = tolower((unsigned char)*s1);
         int c2 = tolower((unsigned char)*s2);
@@ -28,17 +28,14 @@ int strCaseCmp(const char* s1, const char* s2) {
     return tolower((unsigned char)*s1) - tolower((unsigned char)*s2);
 }
 
-// 辅助函数：去除字符串两端的空白字符
-void trim(char* str) {
-    if (!str) return;
-    size_t len = strlen(str);
-    while (len > 0 && isspace((unsigned char)str[len - 1])) {
-        str[--len] = '\0';
-    }
-}
-
 //LOAD命令的实现
-void handleLoad(const char* filename, LinkedList& list, CircularQueue& queue, BST& bst) {
+void handleLoad(const char* filename, LinkedList& list, CircularQueue& queue, BST& bst, UndoStack& undoStack) {
+    //清空数据结构
+    list.clear();
+    queue.clear();
+    bst.clear();
+    undoStack.clear();
+    
     FILE* fp = fopen(filename, "r");
     if (!fp) {
         // 打开失败，文件不存在
@@ -101,8 +98,8 @@ void handleLoad(const char* filename, LinkedList& list, CircularQueue& queue, BS
         while (*ptr == ' ') ptr++;
 
         // 解析消息
-        strncpy(entry.max_message, ptr, MAX_MASSAGE - 1);
-        entry.max_message[MAX_MASSAGE - 1] = '\0';
+        strncpy(entry.max_message, ptr, MAX_MESSAGE - 1);
+        entry.max_message[MAX_MESSAGE - 1] = '\0';
 
         // 尾插插入链表
         list.insertTail(entry);
@@ -176,20 +173,20 @@ int main() { //解析命令并送到分别的处理方式中
             break;
         }
 
-        if (strCaseCmp(command, "LOAD") == 0) {
+        if (strcmpNocap(command, "LOAD") == 0) {
             char filename[100];
             std::cin >> filename;
-            handleLoad(filename, *list, *queue, *bst);
+            handleLoad(filename, *list, *queue, *bst, *undoStack);
         } 
-        else if (strCaseCmp(command, "FILTER") == 0) {
+        else if (strcmpNocap(command, "FILTER") == 0) {
             char start[MAX_TIME * 2], end[MAX_TIME * 2];
             std::cin >> start >> end;
             handleFilter(start, end, *list);
         }
-        else if (strCaseCmp(command, "STATS") == 0) {
+        else if (strcmpNocap(command, "STATS") == 0) {
             handleStats(*bst);
         }
-        else if (strCaseCmp(command, "RECENT") == 0) {
+        else if (strcmpNocap(command, "RECENT") == 0) {
             int n;
             std::cin >> n;
             if (std::cin.fail() == true)
@@ -199,13 +196,13 @@ int main() { //解析命令并送到分别的处理方式中
             }
             queue->traverseQueue(n);
         }
-        else if (strCaseCmp(command, "SEARCH") == 0) {
+        else if (strcmpNocap(command, "SEARCH") == 0) {
             char keyword[100];
             std::cin >> keyword;
             KMP::searchLogs(*list, keyword);
         }
         //处理delete要备份，更新bst，在环形队列里删除引用，记录到保留栈
-        else if (strCaseCmp(command, "DELETE") == 0) {
+        else if (strcmpNocap(command, "DELETE") == 0) {
             int lineNum;
             std::cin >> lineNum;
             if (std::cin.fail()) {
@@ -217,11 +214,11 @@ int main() { //解析命令并送到分别的处理方式中
             if (nodeToDelete != nullptr) {
                 LogEntry entryToSave = nodeToDelete->data;
                 int originalLineNum = nodeToDelete->line_number;
-                queue->removeAt(nodeToDelete);
-                if (strCaseCmp(entryToSave.max_level, "ERROR") == 0) {
+                queue->removeLine(nodeToDelete);
+                if (strcmpNocap(entryToSave.max_level, "ERROR") == 0) {
                     bst->updateCount(entryToSave.max_module, -1);
                 }
-                int delete_success = list->deleteAt(lineNum);
+                int delete_success = list->deleteLine(lineNum);
                 if (delete_success) {
                     if (undoStack->push(entryToSave, originalLineNum)) {
                          std::cout << "Deleted entry " << lineNum << std::endl;
@@ -232,22 +229,22 @@ int main() { //解析命令并送到分别的处理方式中
             }
         } 
         //撤销命令要重新插入，更新bst，重新入队
-        else if (strCaseCmp(command, "UNDO") == 0) {
+        else if (strcmpNocap(command, "UNDO") == 0) {
             Undo action;
             if (undoStack->pop(action)) {
                 ListNode* newNode = list->insertAt(action.original_line_number, action.deleted_entry);
-                if (strCaseCmp(action.deleted_entry.max_level, "ERROR") == 0) {
+                if (strcmpNocap(action.deleted_entry.max_level, "ERROR") == 0) {
                     bst->updateCount(action.deleted_entry.max_module, 1); 
                 }
                 if (newNode != nullptr) {
                     queue->enqueue(newNode);
                 }
-                std::cout << "Undo Successful" << std::endl;
+                std::cout << "Undo successful" << std::endl;
             } else {
                 std::cout << "No more undo" << std::endl;
             }
         }
-        else if (strCaseCmp(command, "EXIT") == 0) {
+        else if (strcmpNocap(command, "EXIT") == 0) {
             break;
         }
         else {
