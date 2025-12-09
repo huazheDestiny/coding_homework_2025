@@ -1,4 +1,4 @@
-//二叉搜索树（BST）的头文件，统计ERROR级别，支持插入、查找、中序遍历
+//BST头文件，统计ERROR级别，支持插入、查找、中序遍历
 #ifndef BST_H
 #define BST_H
 
@@ -9,13 +9,13 @@ struct BSTNode
 {
     char module_name[MAX_MODULE];   //模块名
     int error_count; //错误数目
-    BSTNode* left;//根节点指向左右孩子的指针
+    BSTNode* left;//指向左右孩子的指针
     BSTNode* right;
 
     BSTNode(const char* module,int count = 1);
 };
 
-//用于STATS的命令，暂时不知道需不需要保留
+//用于STATS命令
 struct StatsEntry{
     char module_name[MAX_MODULE];
     int count;
@@ -28,7 +28,7 @@ private:
 
     void destroyTree(BSTNode* node);
     BSTNode* findMin(BSTNode* node) const; //查找并返回当前子树最小节点的函数
-    BSTNode* updateCountHelper(BSTNode* node,const char* module,int count_num); // 处理updateCount的递归辅助函数
+    BSTNode* updateCountHelper(BSTNode* node,const char* module,int count_num); // 处理updateCount的辅助函数
     void collectStats(BSTNode* node,StatsEntry stats_array[],int& index) const; //中序遍历收集统计信息
     BSTNode* copyTreeHelper(BSTNode* node); //递归辅助函数，用于深拷贝
 public:
@@ -41,7 +41,7 @@ public:
 
     void getStats(StatsEntry stats_array[],int& size) const; //用于实现stats命令
 
-    void copyFrom(const BST& other); //深拷贝接口
+    void copyFrom(const BST& other); //深拷贝函数的接口
 };
 
 bool compareStats(const StatsEntry& a,const StatsEntry& b); //用于排序统计结果的比较函数

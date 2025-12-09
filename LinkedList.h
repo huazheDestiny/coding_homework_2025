@@ -55,6 +55,8 @@ public:
 
     //深拷贝函数，用于撤销
     void copyFrom(const LinkedList& other); 
+    //在指定行号处插入新节点,用于还原
+    ListNode* insertAt(int line_number, const LogEntry& entry);
 };
 
 #endif
