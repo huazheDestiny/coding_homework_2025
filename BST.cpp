@@ -8,8 +8,8 @@
 
 BSTNode::BSTNode(const char* module,int count):error_count(count),left(nullptr),right(nullptr)
 {
-    strncpy(this -> module_name,module,MAX_MODULE - 1);
-    this -> module_name[MAX_MODULE - 1] = '\0'; 
+    strncpy(this->module_name,module,MAX_MODULE - 1);
+    this->module_name[MAX_MODULE - 1] = '\0'; 
 }
 
 BST::BST():root(nullptr){
@@ -56,9 +56,9 @@ BSTNode* BST::findMin(BSTNode* node) const{
     if(node == nullptr){
         return nullptr;
     }
-    while (node -> left != nullptr)
+    while (node->left != nullptr)
     {
-        node = node -> left;
+        node = node->left;
     }
     return node;
 }
@@ -75,40 +75,40 @@ BSTNode* BST::updateCountHelper(BSTNode* node,const char* module,int count_num){
         return nullptr;   
     }
     
-    int cmp = strcmp(module,node -> module_name);
+    int cmp = strcmp(module,node->module_name);
     
     if (cmp < 0){
-        node -> left = updateCountHelper(node -> left , module  ,count_num);
+        node->left = updateCountHelper(node->left , module  ,count_num);
     } else if (cmp > 0)
     {
-        node -> right = updateCountHelper(node -> right,module,count_num);
+        node->right = updateCountHelper(node->right,module,count_num);
     } else {
-        node -> error_count += count_num;
+        node->error_count += count_num;
         
-        if (node -> error_count <= 0) //物理删除确保没有内存泄漏
+        if (node->error_count <= 0) //物理删除确保没有内存泄漏
         {
-            if (node -> left == nullptr)
+            if (node->left == nullptr)
             {
-                BSTNode* tmp = node -> right;
+                BSTNode* tmp = node->right;
                 delete node;
                 return tmp;
-            } else if (node -> right == nullptr)
+            } else if (node->right == nullptr)
             {
-                BSTNode* tmp = node -> left;
+                BSTNode* tmp = node->left;
                 delete node;
                 return tmp;
             }
-        BSTNode* successor = findMin(node -> right);
+        BSTNode* successor = findMin(node->right);
             
-        strncpy(node -> module_name,successor -> module_name,MAX_MODULE - 1);
-        node -> module_name[MAX_MODULE - 1] = '\0';
-        node -> error_count = successor -> error_count;  
-        node -> right = updateCountHelper(node -> right,successor -> module_name,0);
-        BSTNode* tmp = findMin(node -> right);
+        strncpy(node->module_name,successor->module_name,MAX_MODULE - 1);
+        node->module_name[MAX_MODULE - 1] = '\0';
+        node->error_count = successor->error_count;  
+        node->right = updateCountHelper(node->right,successor->module_name,0);
+        BSTNode* tmp = findMin(node->right);
 
-        strncpy(node -> module_name,tmp -> module_name,MAX_MODULE - 1);
-        node -> module_name[MAX_MODULE - 1] = '\0';
-        node -> error_count = tmp -> error_count;
+        strncpy(node->module_name,tmp->module_name,MAX_MODULE - 1);
+        node->module_name[MAX_MODULE - 1] = '\0';
+        node->error_count = tmp->error_count;
         node -> right = updateCountHelper(node -> right,tmp -> module_name,0 - tmp -> error_count);
         }
     }
@@ -214,7 +214,7 @@ BSTNode* BST::deepCopyTree(BSTNode* node) {
     // 创建新节点，复制数据
     BSTNode* newNode = new BSTNode(node->module_name, node->error_count);
     
-    // 递归复制左右子树，因为撤回操作不会太频繁，递归不会导致栈溢出
+    // 递归复制左右子树，因为撤回操作理论上不会太频繁，递归不会导致栈溢出
     newNode->left = deepCopyTree(node->left);
     newNode->right = deepCopyTree(node->right);
     
